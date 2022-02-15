@@ -12,6 +12,8 @@ The program shall accept the following command-line arguments:
 ## to do
 
 - [x] setup command-line arguments
+  - [x] send
+  - [ ] receive
 - [ ] add message passing functionality
   - [ ] send
   - [ ] receive
