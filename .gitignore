@@ -1,4 +1,2 @@
-ipc_sendfile/build/x86_64-debug/src/ipc_sendfile.o
-ipc_sendfile/build/x86_64-debug/ipc_sendfile
-ipc_receivefile/build/x86_64-debug/src/ipc_receivefile.o
-ipc_receivefile/build/x86_64-debug/ipc_receivefile
+ipc_sendfile/build/
+ipc_receivefile/build/

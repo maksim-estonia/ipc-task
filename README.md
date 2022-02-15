@@ -9,11 +9,11 @@ The program shall accept the following command-line arguments:
 - "--shm [buffer size in kB]" shall use shared memory buffer as IPC method (remember mutexes/semaphores!)
 - "--file [filename]" file used to read/write data
 
-## to do
+## To do
 
 - [x] setup command-line arguments
   - [x] send
-  - [ ] receive
+  - [x] receive
 - [ ] add message passing functionality
   - [ ] send
   - [ ] receive
@@ -26,3 +26,21 @@ The program shall accept the following command-line arguments:
 - [ ] add shared memory functionality
   - [ ] send
   - [ ] receive
+
+## Command line arguments
+
+`ipc_receivefile --help`
+
+![receive-help](images/receive-help.png)
+
+`ipc_receivefile --message --file filename`
+
+![receive-message](images/receive-message.png)
+
+`ipc_sendfile --help`
+
+![send-help](images/send-help.png)
+
+`ipc_sendfile --message --file filename`
+
+![send-message](images/send-message.png)

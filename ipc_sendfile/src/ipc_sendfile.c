@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	//--message
 	if (strcmp(argv[1], "--message") == 0)
 	{
-		printf("\n Using message passing as IPC method \n");
+		printf("Using message passing as IPC method \n");
 
 		if (strcmp(argv[2], "--file") == 0)
 		{
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 	//--queue
 	if (strcmp(argv[1], "--queue") == 0)
 	{
-		printf("\n Using message queue as IPC method \n");
+		printf("Using message queue as IPC method \n");
 
 		if (strcmp(argv[2], "--file") == 0)
 		{
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 	//--pipe
 	if (strcmp(argv[1], "--pipe") == 0)
 	{
-		printf("\n Using pipe as IPC method \n");
+		printf("Using pipe as IPC method \n");
 
 		if (strcmp(argv[2], "--file") == 0)
 		{
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 	//--shm
 	if (strcmp(argv[1], "--shm") == 0)
 	{
-		printf("\n Using shared memory as IPC method \n");
+		printf("Using shared memory as IPC method \n");
 
 		if (strcmp(argv[2], "--file") == 0)
 		{
