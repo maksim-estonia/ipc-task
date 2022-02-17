@@ -5,8 +5,8 @@
  *      Author: maksim
  */
 
-#ifndef SRC_PIPE_PROCESSING_H_
-#define SRC_PIPE_PROCESSING_H_
+#ifndef SRC_RECEIVE_PIPE_PROCESSING_H_
+#define SRC_RECEIVE_PIPE_PROCESSING_H_
 
 #include <stdio.h>
 #include <sys/stat.h>
@@ -17,8 +17,8 @@
 
 #define FIFO_FILE "MYFIFO"
 
-int pipe_processing(void);
+int receive_pipe_processing(char*);
 
 
 
-#endif /* SRC_PIPE_PROCESSING_H_ */
+#endif /* SRC_RECEIVE_PIPE_PROCESSING_H_ */

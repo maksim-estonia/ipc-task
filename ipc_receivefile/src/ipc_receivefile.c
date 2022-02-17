@@ -7,7 +7,7 @@
 #include <sys/dispatch.h>
 
 // pipe processing
-#include "pipe_processing.h"
+#include "receive_pipe_processing.h"
 
 //int calculate_checksum(char *text);
 
@@ -88,10 +88,18 @@ int main(int argc, char* argv[])
 
 		if (strcmp(argv[2], "--file") == 0)
 		{
-			printf("Writing data to: %s", argv[3]);
+			printf("Writing data to: %s \n", argv[3]);
+
+			if ( receive_pipe_processing(argv[3]) == 0)
+			{
+				printf("Received successfully \n");
+			}
+			else
+			{
+				printf("ipc_receivefile: Error occurred \n");
+			}
 		}
 
-		pipe_processing();
 	}
 
 	//--shm

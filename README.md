@@ -47,11 +47,13 @@ The program shall accept the following command-line arguments:
 
 ## Pipe
 
-1. Copy a text file into `/tmp` folder:
+1. Copy [a text file](read-file.txt) into `/tmp` folder:
 
 ```shell
 scp maksim@192.168.122.1:/home/maksim/read-file.txt /tmp
 ```
+
+![copy-file](images/pipe/copy-file.png)
 
 2. Start ipc_receivefile as follows:
 
@@ -65,4 +67,9 @@ ipc_receivefile --pipe --file write-file.txt
 ipc_sendfile --pipe --file read-file.txt
 ```
 
-Now `read-file.txt` should be sent through a pipe line-by-line to `ipc_receivefile` process and written to `write-file.txt`. 
+Now `read-file.txt` should be sent through a pipe line-by-line to `ipc_receivefile` process and written to `write-file.txt`:
+
+![send-receive](images/pipe/send-receive.png)
+
+![write-file](images/pipe/write-file.png)
+

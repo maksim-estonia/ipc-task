@@ -5,10 +5,10 @@
  *      Author: maksim
  */
 
-#include "pipe_processing.h"
+#include "receive_pipe_processing.h"
 
 // returns 0 if succesful
-int pipe_processing(void)
+int receive_pipe_processing(char* filename)
 {
 	int fd;
 	char readbuf[80];
@@ -19,7 +19,7 @@ int pipe_processing(void)
 	FILE * fp;
 
 	// create file
-	fp = fopen("write-file.txt", "w+");
+	fp = fopen(filename, "w+");
 
 	// create a FIFO
 	mknod(FIFO_FILE, S_IFIFO|0640, 0);
@@ -31,7 +31,7 @@ int pipe_processing(void)
 		fd = open(FIFO_FILE, O_RDONLY);
 		read_bytes = read(fd, readbuf, sizeof(readbuf));
 		readbuf[read_bytes] = '\0';
-		printf("Received string: \"%s\" and length is %d\n", readbuf, (int)strlen(readbuf));
+		printf("Sent string: %s --> string length is %d\n", readbuf, (int)strlen(readbuf));
 
 		// if end we can stop
 		to_end = strcmp(readbuf, end);
