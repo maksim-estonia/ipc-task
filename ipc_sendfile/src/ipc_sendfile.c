@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "send_pipe_processing.h"
+
 int main(int argc, char* argv[])
 {
 
@@ -60,6 +62,7 @@ int main(int argc, char* argv[])
 		if (strcmp(argv[2], "--file") == 0)
 		{
 			printf("Sending data from: %s", argv[3]);
+
 		}
 	}
 
@@ -70,7 +73,16 @@ int main(int argc, char* argv[])
 
 		if (strcmp(argv[2], "--file") == 0)
 		{
-			printf("Sending data from: %s", argv[3]);
+			printf("Sending data from: %s \n", argv[3]);
+
+			if ( send_pipe_processing(argv[3]) == 0 )
+			{
+				printf("Sent successfully \n");
+			}
+			else
+			{
+				printf("ipc_sendfile: Error occurred \n");
+			}
 		}
 	}
 

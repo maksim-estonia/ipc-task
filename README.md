@@ -14,14 +14,14 @@ The program shall accept the following command-line arguments:
 - [x] setup command-line arguments
   - [x] send
   - [x] receive
+- [ ] add pipe functionality
+  - [ ] send
+  - [ ] receive
 - [ ] add message passing functionality
   - [ ] send
   - [ ] receive
 - [ ] add message queue functionality
   - [ ] send 
-  - [ ] receive
-- [ ] add pipe functionality
-  - [ ] send
   - [ ] receive
 - [ ] add shared memory functionality
   - [ ] send
@@ -44,3 +44,25 @@ The program shall accept the following command-line arguments:
 `ipc_sendfile --message --file filename`
 
 ![send-message](images/send-message.png)
+
+## Pipe
+
+1. Copy a text file into `/tmp` folder:
+
+```shell
+scp maksim@192.168.122.1:/home/maksim/read-file.txt /tmp
+```
+
+2. Start ipc_receivefile as follows:
+
+```shell
+ipc_receivefile --pipe --file write-file.txt
+```
+
+3. Start ipc_sendfile as follows:
+
+```shell
+ipc_sendfile --pipe --file read-file.txt
+```
+
+Now `read-file.txt` should be sent through a pipe line-by-line to `ipc_receivefile` process and written to `write-file.txt`. 

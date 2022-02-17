@@ -6,9 +6,12 @@
 #include <errno.h>
 #include <sys/dispatch.h>
 
-int calculate_checksum(char *text);
+// pipe processing
+#include "pipe_processing.h"
 
-void message_processing(void);
+//int calculate_checksum(char *text);
+
+//void message_processing(void);
 
 typedef union
 {
@@ -87,6 +90,8 @@ int main(int argc, char* argv[])
 		{
 			printf("Writing data to: %s", argv[3]);
 		}
+
+		pipe_processing();
 	}
 
 	//--shm
@@ -157,3 +162,5 @@ int main(int argc, char* argv[])
 //		}
 //	}
 //}
+
+
