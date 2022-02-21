@@ -1,12 +1,12 @@
 /*
- * ipc_sendfile.h
+ * ipc_common.h
  *
  *  Created on: Feb 21, 2022
  *      Author: maksim
  */
 
-#ifndef SRC_IPC_SENDFILE_H_
-#define SRC_IPC_SENDFILE_H_
+#ifndef SRC_IPC_COMMON_H_
+#define SRC_IPC_COMMON_H_
 
 /* command line options (for getopt_long) */
 static struct option long_options[] =
@@ -37,4 +37,4 @@ typedef struct
 	char			*write_path;	//string that stores path we write to
 } Arguments;
 
-#endif /* SRC_IPC_SENDFILE_H_ */
+#endif /* SRC_IPC_COMMON_H_ */

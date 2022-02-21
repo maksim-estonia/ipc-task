@@ -9,11 +9,14 @@
 #define SRC_RECEIVE_PIPE_PROCESSING_H_
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+
+#include "ipc_common.h"
 
 #define FIFO_FILE "MYFIFO"
 

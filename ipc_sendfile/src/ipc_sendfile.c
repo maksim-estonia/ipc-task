@@ -3,9 +3,7 @@
 #include <string.h>
 #include <getopt.h>
 
-#include "ipc_sendfile.h"
-
-/* pipe functionality */
+#include "ipc_common.h"
 #include "send_pipe_processing.h"
 
 
@@ -47,22 +45,22 @@ int main(int argc, char* argv[])
 		{
 		case 'm':
 			(&arg)->tr_type 	= MESSAGE;
-			(&arg)->read_path 	= optarg;
+			//(&arg)->read_path 	= optarg;
 			break;
 		case 'q':
 			(&arg)->tr_type 	= QUEUE;
-			(&arg)->read_path	= optarg;
+			//(&arg)->read_path	= optarg;
 			break;
 		case 'p':
 			(&arg)->tr_type		= PIPE;
-			(&arg)->read_path	= optarg;
+			//(&arg)->read_path	= optarg;
 			break;
 		case 's':
 			(&arg)->tr_type		= SHM;
-			(&arg)->read_path	= optarg;
+			//(&arg)->read_path	= optarg;
 			break;
 		case 'f':
-			(&arg)->write_path	= optarg;
+			(&arg)->read_path	= optarg;
 			break;
 
 		case 'h':
@@ -82,7 +80,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if (!(&arg)->write_path)
+	if (!(&arg)->read_path)
 	{
 		fprintf(stderr, "No file path provided \n");
 		return -1;
@@ -98,7 +96,7 @@ int main(int argc, char* argv[])
 	case PIPE:
 		printf("PIPE messaging selected \n");
 		status = 0;
-		//status = send_pipe_processing(arg->read_path, arg->write_path);
+		status = send_pipe_processing((&arg)->read_path);
 		if (status != 0)
 		{
 			fprintf(stderr, "PIPE messaging failed \n");

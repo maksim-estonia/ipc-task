@@ -19,7 +19,7 @@
 
 #define FIFO_FILE "MYFIFO"
 
-int send_pipe_processing(char*, char*);
+int send_pipe_processing(char*);
 
 
 

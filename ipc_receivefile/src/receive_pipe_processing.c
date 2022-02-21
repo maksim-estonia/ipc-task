@@ -7,35 +7,48 @@
 
 #include "receive_pipe_processing.h"
 
+#define BUFFER_SIZE 1024
+
 // returns 0 if succesful
-int receive_pipe_processing(char* filename)
+int receive_pipe_processing(char* write_path)
 {
 	int fd;
-	char readbuf[80];
-	char end[5];
-	int to_end;
+	char readbuf[BUFFER_SIZE];
 	int read_bytes;
+	int total_read_bytes = 0;
+	int length_msg = 0;
 
 	FILE * fp;
 
 	// create file
-	fp = fopen(filename, "w+");
+	fp = fopen(write_path, "w+");
 
 	// create a FIFO
 	mknod(FIFO_FILE, S_IFIFO|0640, 0);
-	strcpy(end, "end");
+
+	// open pipe, read data, first data is the length of the text file
+	fd = open(FIFO_FILE, O_RDONLY);
+	while (length_msg == 0)
+	{
+		read_bytes = read(fd, readbuf, sizeof(readbuf));
+		length_msg = atoi(readbuf);
+	}
+	printf("FILE SIZE: %d \n", length_msg);
 
 	while(1)
 	{
-		// open pipe and read data
-		fd = open(FIFO_FILE, O_RDONLY);
+		// open pipe and read data, first data is the length of the text file
+		//fd = open(FIFO_FILE, O_RDONLY);
 		read_bytes = read(fd, readbuf, sizeof(readbuf));
+		total_read_bytes += read_bytes;
 		readbuf[read_bytes] = '\0';
-		printf("Sent string: %s --> string length is %d\n", readbuf, (int)strlen(readbuf));
+		printf("Received string: \"%s\" --> length is %d \n", readbuf, (int)strlen(readbuf));
 
-		// if end we can stop
-		to_end = strcmp(readbuf, end);
-		if (to_end == 0)
+		//write to file
+		fputs(readbuf, fp);
+
+		//if msg received fully, we can stop
+		if (total_read_bytes >= length_msg)
 		{
 			// close pipe
 			close(fd);
@@ -43,9 +56,6 @@ int receive_pipe_processing(char* filename)
 			fclose(fp);
 			break;
 		}
-
-		// if not end, write to file
-		fputs(readbuf, fp);
 	}
 
 	return 0;

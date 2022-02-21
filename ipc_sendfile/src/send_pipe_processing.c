@@ -7,50 +7,74 @@
 
 #include "send_pipe_processing.h"
 
-int send_pipe_processing(char* read_path, char* write_path)
+#define BUFFER_SIZE 1024
+
+int send_pipe_processing(char* read_path)
 {
 	// client
 	int fd;
-	int stringlen;
-	char end_str[5];
+	char readbuf[BUFFER_SIZE];
 	// read file
 	FILE *fp;
-	char str[80];
-
-	char * filename;
+	int sz; //size of the file
+	size_t read_bytes;
+	int n = 0;
+	int remaining_bytes;
 
 	// open file
-	fp = fopen(filename, "r");
+	fp = fopen(read_path, "r");
 	if (fp == NULL)
 	{
 		perror("Error opening file");
 		return -1;
 	}
 
+	// find file size
+	fseek(fp, 0L, SEEK_END);	// go to end
+	sz = ftell(fp);				// store size
+	rewind(fp);					// go to begin
+
+	printf("FILE SIZE: %d \n", sz);
+
 	// open pipe
-	printf("FIFO_CLIENT: send messages \n");
+	printf("Start sending messages \n");
 	fd = open(FIFO_FILE, O_CREAT|O_WRONLY);
-	strcpy(end_str, "end");
 
-	while (fgets(str, 80, fp) != NULL)
+	// send file size
+	sprintf(readbuf, "%d", sz);
+	write(fd, readbuf, strlen(readbuf));
+	delay(100);
+
+	while(1)
 	{
-		// send str through pipe
-		stringlen = strlen(str);
-		str[stringlen] = '\0';
+		read_bytes = fread(readbuf, sizeof(readbuf), 1, fp);
 
-		write(fd, str, strlen(str));
-		printf("Sent string: %s --> string length is %d\n", str, (int)strlen(str));
+		if (read_bytes != 1)
+		{
+			//EOF reached, send last string
+			remaining_bytes = sz - sizeof(readbuf)*n;
+			readbuf[remaining_bytes] = '\0';
+			printf("last string: %s \n", readbuf);
+			write(fd, readbuf, remaining_bytes);
+			delay(100);
 
+			// file has been sent
+			// close file
+			fclose(fp);
+			// close pipe
+			close(fd);
+
+			break;
+		}
+
+		//sending full buffer
+		readbuf[sizeof(readbuf)] = '\0';
+		printf("read string: %s \n", readbuf);
+		write(fd, readbuf, sizeof(readbuf));
 		delay(100);
+		n +=1;
 	}
 
-	// close file
-	fclose(fp);
-
-	// close pipe
-	close(fd);
-
 	return 0;
-
 
 }
