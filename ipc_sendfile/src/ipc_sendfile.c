@@ -1,103 +1,116 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 
+#include "ipc_sendfile.h"
+
+/* pipe functionality */
 #include "send_pipe_processing.h"
+
+
 
 int main(int argc, char* argv[])
 {
 
-	int counter;
+	int c;
+	Arguments arg;
+	int status = 0;
 
-	if (argc == 1)
+	/* Default arguments values */
+	(&arg)->tr_type	= DEFAULT;
+	(&arg)->read_path	= NULL;
+	(&arg)->write_path = NULL;
+
+	/* if not enough arguments given */
+	if (argc < 2)
 	{
-		printf("ERROR: Program has to be run with command-line arguments, for more information: \n\n");
-		printf("ipc_sendfile --help");
-		return EXIT_FAILURE;
+		fprintf(stderr, "ipc_sendfile requires arguments! \n");
+		return -1;
 	}
 
-	if (argc >= 2)
+
+	while(1)
 	{
-		printf("\n Arguments passed: \n");
-		for (counter=0; counter<argc; counter++)
-			printf("\n argv[%d]: %s", counter, argv[counter]);
-		printf("\n \n");
-	}
+		/* getopt_long stores the option index here */
+		int option_index = 0;
 
-	//--help
-	if (strcmp(argv[1], "--help") == 0)
-	{
-		printf("\n Use the program as follows: \n");
-		printf("--help: prints out a help text containing short description of all supported command-line arguments \n");
-		printf("--message <TBD>: use message passing as IPC method \n");
-		printf("--queue <TBD>: use message queue as IPC method \n");
-		printf("--pipe <TBD>: use pipe as IPC method \n");
-		printf("--shm [buffer size in kB]: use shared memory buffer as IPC method \n");
-		printf("--file [filename]: file used to read data from \n");
+		c = getopt_long(argc, argv, "hmqpsf:", long_options, &option_index);
 
-	}
-
-	// if only --help, otherwise we need at least 2 arguments (ipc method and file)
-	if (argc == 2)
-	{
-		return EXIT_SUCCESS;
-	}
-
-	//--message
-	if (strcmp(argv[1], "--message") == 0)
-	{
-		printf("Using message passing as IPC method \n");
-
-		if (strcmp(argv[2], "--file") == 0)
+		/* detect the end of options */
+		if (c == -1)
 		{
-			printf("Sending data from: %s", argv[3]);
+			break;
+		}
+
+		switch (c)
+		{
+		case 'm':
+			(&arg)->tr_type 	= MESSAGE;
+			(&arg)->read_path 	= optarg;
+			break;
+		case 'q':
+			(&arg)->tr_type 	= QUEUE;
+			(&arg)->read_path	= optarg;
+			break;
+		case 'p':
+			(&arg)->tr_type		= PIPE;
+			(&arg)->read_path	= optarg;
+			break;
+		case 's':
+			(&arg)->tr_type		= SHM;
+			(&arg)->read_path	= optarg;
+			break;
+		case 'f':
+			(&arg)->write_path	= optarg;
+			break;
+
+		case 'h':
+			printf("\n Use the program as follows: \n");
+			printf("--help: prints out a help text containing short description of all supported command-line arguments \n");
+			printf("--message <TBD>: use message passing as IPC method \n");
+			printf("--queue <TBD>: use message queue as IPC method \n");
+			printf("--pipe <TBD>: use pipe as IPC method \n");
+			printf("--shm [buffer size in kB]: use shared memory buffer as IPC method \n");
+			printf("--file [filename]: file used to read data from \n");
+			return -1;
+
+		default:
+			fprintf(stderr, "Unknown arguments provided \n");
+			return -1;
+
 		}
 	}
 
-	//--queue
-	if (strcmp(argv[1], "--queue") == 0)
+	if (!(&arg)->write_path)
 	{
-		printf("Using message queue as IPC method \n");
-
-		if (strcmp(argv[2], "--file") == 0)
-		{
-			printf("Sending data from: %s", argv[3]);
-
-		}
+		fprintf(stderr, "No file path provided \n");
+		return -1;
 	}
 
-	//--pipe
-	if (strcmp(argv[1], "--pipe") == 0)
+	switch ((&arg)->tr_type)
 	{
-		printf("Using pipe as IPC method \n");
-
-		if (strcmp(argv[2], "--file") == 0)
+	case MESSAGE:
+	case QUEUE:
+	case SHM:
+		fprintf(stderr, "This type of ipc is not yet implemented \n");
+		return -1;
+	case PIPE:
+		printf("PIPE messaging selected \n");
+		status = 0;
+		//status = send_pipe_processing(arg->read_path, arg->write_path);
+		if (status != 0)
 		{
-			printf("Sending data from: %s \n", argv[3]);
-
-			if ( send_pipe_processing(argv[3]) == 0 )
-			{
-				printf("Sent successfully \n");
-			}
-			else
-			{
-				printf("ipc_sendfile: Error occurred \n");
-			}
+			fprintf(stderr, "PIPE messaging failed \n");
+			return -1;
 		}
+		printf("PIPE message sent \n");
+		break;
+	default:
+		fprintf(stderr, "No IPC message type selected \n");
+		return -1;
 	}
 
-	//--shm
-	if (strcmp(argv[1], "--shm") == 0)
-	{
-		printf("Using shared memory as IPC method \n");
+	return 0;
 
-		if (strcmp(argv[2], "--file") == 0)
-		{
-			printf("Sending data from: %s", argv[3]);
-		}
-	}
-
-
-
-	return EXIT_SUCCESS;
 }

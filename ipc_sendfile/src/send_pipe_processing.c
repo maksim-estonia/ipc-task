@@ -7,8 +7,7 @@
 
 #include "send_pipe_processing.h"
 
-// returns 0 if successful, -1 if not
-int send_pipe_processing(char* filename)
+int send_pipe_processing(char* read_path, char* write_path)
 {
 	// client
 	int fd;
@@ -17,6 +16,8 @@ int send_pipe_processing(char* filename)
 	// read file
 	FILE *fp;
 	char str[80];
+
+	char * filename;
 
 	// open file
 	fp = fopen(filename, "r");
