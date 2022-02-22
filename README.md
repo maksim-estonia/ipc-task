@@ -14,9 +14,9 @@ The program shall accept the following command-line arguments:
 - [x] setup command-line arguments
   - [x] send
   - [x] receive
-- [ ] add pipe functionality
-  - [ ] send
-  - [ ] receive
+- [x] add pipe functionality
+  - [x] send
+  - [x] receive
 - [ ] add message passing functionality
   - [ ] send
   - [ ] receive

@@ -11,6 +11,8 @@
 #include "ipc_common.h"
 #include "receive_pipe_processing.h"
 
+#include "receive_message_processing.h"
+
 //typedef union
 //{
 //	uint16_t type;
@@ -92,11 +94,20 @@ int main(int argc, char* argv[])
 
 	switch ((&arg)->tr_type)
 	{
-	case MESSAGE:
 	case QUEUE:
 	case SHM:
 		fprintf(stderr, "This type of ipc is not yet implemented \n");
 		return -1;
+	case MESSAGE:
+		printf("MESSAGE selected \n");
+		status = receive_message_processing((&arg)->write_path);
+		if (status != 0)
+		{
+			fprintf(stderr, "MESSAGE failed \n");
+			return -1;
+		}
+		printf("MESSAGE received \n");
+		break;
 	case PIPE:
 		printf("PIPE messaging selected \n");
 		status = 0;

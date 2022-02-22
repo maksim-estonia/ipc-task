@@ -37,7 +37,7 @@ int receive_pipe_processing(char* write_path)
 
 	while(1)
 	{
-		// open pipe and read data, first data is the length of the text file
+		// open pipe and read data
 		//fd = open(FIFO_FILE, O_RDONLY);
 		read_bytes = read(fd, readbuf, sizeof(readbuf)-1);
 		printf("read_bytes: %d \n", read_bytes);

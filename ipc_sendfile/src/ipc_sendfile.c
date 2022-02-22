@@ -6,7 +6,7 @@
 #include "ipc_common.h"
 #include "send_pipe_processing.h"
 
-
+#include "send_message_processing.h"
 
 int main(int argc, char* argv[])
 {
@@ -88,11 +88,21 @@ int main(int argc, char* argv[])
 
 	switch ((&arg)->tr_type)
 	{
-	case MESSAGE:
 	case QUEUE:
 	case SHM:
 		fprintf(stderr, "This type of ipc is not yet implemented \n");
 		return -1;
+	case MESSAGE:
+		printf("MESSAGE selected \n");
+		status = 0;
+		status = send_message_processing((&arg)->read_path);
+		if (status != 0)
+		{
+			fprintf(stderr, "MESSAGE failed \n");
+			return -1;
+		}
+		printf("MESSAGE sent \n");
+		break;
 	case PIPE:
 		printf("PIPE messaging selected \n");
 		status = 0;
