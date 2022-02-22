@@ -39,7 +39,8 @@ int receive_pipe_processing(char* write_path)
 	{
 		// open pipe and read data, first data is the length of the text file
 		//fd = open(FIFO_FILE, O_RDONLY);
-		read_bytes = read(fd, readbuf, sizeof(readbuf));
+		read_bytes = read(fd, readbuf, sizeof(readbuf)-1);
+		printf("read_bytes: %d \n", read_bytes);
 		total_read_bytes += read_bytes;
 		readbuf[read_bytes] = '\0';
 		printf("Received string: \"%s\" --> length is %d \n", readbuf, (int)strlen(readbuf));

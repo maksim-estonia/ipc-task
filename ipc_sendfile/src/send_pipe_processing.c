@@ -23,6 +23,7 @@ int send_pipe_processing(char* read_path)
 
 	// open file
 	fp = fopen(read_path, "r");
+	printf("READING FILE: %s \n", read_path);
 	if (fp == NULL)
 	{
 		perror("Error opening file");
@@ -47,14 +48,16 @@ int send_pipe_processing(char* read_path)
 
 	while(1)
 	{
-		read_bytes = fread(readbuf, sizeof(readbuf), 1, fp);
+		read_bytes = fread(readbuf, sizeof(readbuf)-1, 1, fp);
+		printf("size: %d \n", sizeof(readbuf)-1);
 
 		if (read_bytes != 1)
 		{
 			//EOF reached, send last string
-			remaining_bytes = sz - sizeof(readbuf)*n;
+			remaining_bytes = sz - (sizeof(readbuf)-1)*n;
 			readbuf[remaining_bytes] = '\0';
 			printf("last string: %s \n", readbuf);
+			printf("string length: %d \n", remaining_bytes);
 			write(fd, readbuf, remaining_bytes);
 			delay(100);
 
@@ -68,7 +71,7 @@ int send_pipe_processing(char* read_path)
 		}
 
 		//sending full buffer
-		readbuf[sizeof(readbuf)] = '\0';
+		readbuf[sizeof(readbuf)-1] = '\0';
 		printf("read string: %s \n", readbuf);
 		write(fd, readbuf, sizeof(readbuf));
 		delay(100);
