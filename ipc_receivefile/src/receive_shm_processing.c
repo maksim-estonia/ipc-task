@@ -13,12 +13,6 @@ void unlink_and_exit(char *name)
 	exit(EXIT_FAILURE);
 }
 
-void unlink_and_cont(char *name)
-{
-	(void)shm_unlink(name);
-	//exit(EXIT_FAILURE);
-}
-
 void *get_shared_memory_pointer(char *name, unsigned num_tries)
 {
 	unsigned tries;
@@ -89,16 +83,20 @@ int receive_shm_processing(char * write_path)
 
 	// create file
 	fp = fopen(write_path, "w+");
+	if (fp == NULL)
+	{
+		perror("fopen()");
+		exit(-1);
+	}
 
 	printf("Creating shared memory object: %s \n", "/shmem");
-
-	/* create the shared memory object */
 
 	fd = shm_open("/shmem", O_RDWR | O_CREAT | O_EXCL, 0660);
 	if (fd == -1)
 	{
 		perror("shm_open()");
-		unlink_and_cont("/shmem");
+		fclose(fp);
+		unlink_and_exit("/shmem");
 	}
 
 	/* set the size of the shared memory object, allocating at least one page of memory */
@@ -107,6 +105,7 @@ int receive_shm_processing(char * write_path)
 	if (ret == -1)
 	{
 		perror("ftruncate");
+		fclose(fp);
 		unlink_and_exit("/shmem");
 	}
 
@@ -130,6 +129,7 @@ int receive_shm_processing(char * write_path)
 	if (ret != EOK)
 	{
 		perror("pthread_mutex_init");
+		fclose(fp);
 		unlink_and_exit("/shmem");
 	}
 
@@ -139,6 +139,7 @@ int receive_shm_processing(char * write_path)
 	if (ret != EOK)
 	{
 		perror("pthread_cond_init");
+		fclose(fp);
 		unlink_and_exit("/shmem");
 	}
 
@@ -154,7 +155,7 @@ int receive_shm_processing(char * write_path)
 
 	while (length_msg == 0)
 	{
-		printf("looking for length_msg \n");
+		printf("waiting for length_msg \n");
 		// 1. lock the mutex we're about to access shared data
 		ret = pthread_mutex_lock(&ptr->mutex);
 		if (ret != EOK)
@@ -174,24 +175,24 @@ int receive_shm_processing(char * write_path)
 			}
 		}
 
-		// 3. update local version and data
+		// 3. copy length_msg
 		last_version = ptr->data_version;
 		strlcpy(local_data_copy, ptr->text, sizeof(local_data_copy));
 		length_msg = atoi(local_data_copy);
+		ptr->data_version = last_version+1;
 
 		// 4. finished accessing shared data, unlock the mutex
 		ret = pthread_mutex_unlock(&ptr->mutex);
 		if (ret != EOK)
 		{
 			perror("pthread_mutex_unlock");
+			fclose(fp);
 			exit(EXIT_FAILURE);
 		}
-		printf("looking for length_msg 2 \n");
-		sleep(1);
+		//sleep(1);
 	}
 
 	printf("FILE SIZE: '%d' \n", length_msg);
-	ptr->data_version = last_version+1;
 
 	while (1)
 	{
@@ -214,12 +215,11 @@ int receive_shm_processing(char * write_path)
 			}
 		}
 
-		// 3. update local version and data
-		last_version = ptr->data_version;
+		// 3. update data
 		strlcpy(local_data_copy, ptr->text, sizeof(local_data_copy));
 		printf("Received string: \"%s\" --> length is %d \n", local_data_copy, (int)strlen(local_data_copy));
-
 		printf("read_bytes: %d \n", strlen(local_data_copy));
+		last_version = ptr->data_version;
 		total_read_bytes += strlen(local_data_copy);
 
 		// write to file
@@ -230,6 +230,7 @@ int receive_shm_processing(char * write_path)
 		if (ret != EOK)
 		{
 			perror("pthread_mutex_unlock");
+			fclose(fp);
 			exit(EXIT_FAILURE);
 		}
 

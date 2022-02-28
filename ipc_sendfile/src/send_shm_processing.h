@@ -19,6 +19,7 @@
 
 #include <pthread.h>
 #include <stdint.h>
+#include <time.h>
 
 #define MAX_TEXT_LEN 100
 

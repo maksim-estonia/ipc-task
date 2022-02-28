@@ -7,8 +7,6 @@
 
 #include "send_shm_processing.h"
 
-#include <time.h>
-
 void unlink_and_exit(char *name)
 {
 	(void)shm_unlink(name);
@@ -73,10 +71,8 @@ int send_shm_processing(char * read_path)
 {
 	int ret;
 	shmem_t *ptr;
-	//uint64_t last_version = 0;
-	char local_data_copy[MAX_TEXT_LEN];
+	uint64_t last_version = 0;
 	// client
-	int fd;
 	char readbuf[MAX_TEXT_LEN];
 	// read file
 	FILE *fp;
@@ -85,7 +81,6 @@ int send_shm_processing(char * read_path)
 	int n=0;
 	int remaining_bytes;
 	int exit_loop = 0;
-	int last_version;
 
 	// open file
 	fp = fopen(read_path, "r");
@@ -108,6 +103,7 @@ int send_shm_processing(char * read_path)
 	if (ptr == MAP_FAILED)
 	{
 		fprintf(stderr, "Unable to access object");
+		fclose(fp);
 		exit(EXIT_FAILURE);
 	}
 
@@ -121,6 +117,7 @@ int send_shm_processing(char * read_path)
 	if (ret != EOK)
 	{
 		perror("pthread_mutex_lock");
+		fclose(fp);
 		exit(EXIT_FAILURE);
 	}
 
@@ -133,6 +130,7 @@ int send_shm_processing(char * read_path)
 	if (ret != EOK)
 	{
 		perror("pthread_mutex_unlock");
+		fclose(fp);
 		unlink_and_exit("/shmem");
 	}
 
@@ -141,9 +139,11 @@ int send_shm_processing(char * read_path)
 	if (ret != EOK)
 	{
 		perror("pthread_cond_broadcast");
+		fclose(fp);
 		unlink_and_exit("/shmem");
 	}
 
+	// waiting until length_msg has been read
 	while (last_version == ptr->data_version)
 	{
 		delay(100);
@@ -152,13 +152,12 @@ int send_shm_processing(char * read_path)
 
 	while(1)
 	{
-		delay(100);
-
 		/* lock the mutex we're about to access shared data */
 		ret = pthread_mutex_lock(&ptr->mutex);
 		if (ret != EOK)
 		{
 			perror("pthread_mutex_lock");
+			fclose(fp);
 			exit(EXIT_FAILURE);
 		}
 
@@ -182,6 +181,7 @@ int send_shm_processing(char * read_path)
 		if (ret != EOK)
 		{
 			perror("pthread_mutex_unlock");
+			fclose(fp);
 			unlink_and_exit("/shmem");
 		}
 
@@ -190,6 +190,7 @@ int send_shm_processing(char * read_path)
 		if (ret != EOK)
 		{
 			perror("pthread_cond_broadcast");
+			fclose(fp);
 			unlink_and_exit("/shmem");
 		}
 
@@ -199,7 +200,11 @@ int send_shm_processing(char * read_path)
 		}
 
 		n+=1;
+		delay(100);
 	}
+
+	// close file
+	fclose(fp);
 
 	/* unmap() not actually needed on termination as all memory mappings are freed on process termination */
 	if (munmap(ptr, sizeof(shmem_t)) == -1)
