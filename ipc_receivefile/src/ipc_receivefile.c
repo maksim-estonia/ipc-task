@@ -15,6 +15,8 @@
 
 #include "receive_queue_processing.h"
 
+#include "receive_shm_processing.h"
+
 //typedef union
 //{
 //	uint16_t type;
@@ -97,8 +99,15 @@ int main(int argc, char* argv[])
 	switch ((&arg)->tr_type)
 	{
 	case SHM:
-		fprintf(stderr, "This type of ipc is not yet implemented \n");
-		return -1;
+		printf("SHARED MEMORY selected \n");
+		status = receive_shm_processing((&arg)->write_path);
+		if (status != 0)
+		{
+			fprintf(stderr, "QUEUE failed \n");
+			return -1;
+		}
+		printf("SHARED MEMORY received \n");
+		break;
 	case QUEUE:
 		printf("QUEUE selected \n");
 		status = receive_queue_processing((&arg)->write_path);

@@ -10,6 +10,8 @@
 
 #include "send_queue_processing.h"
 
+#include "send_shm_processing.h"
+
 int main(int argc, char* argv[])
 {
 
@@ -91,8 +93,16 @@ int main(int argc, char* argv[])
 	switch ((&arg)->tr_type)
 	{
 	case SHM:
-		fprintf(stderr, "This type of ipc is not yet implemented \n");
-		return -1;
+		printf("SHARED MEMORY selected \n");
+		status = 0;
+		status = send_shm_processing((&arg)->read_path);
+		if (status != 0)
+		{
+			fprintf(stderr, "SHARED MEMORY failed \n");
+			return -1;
+		}
+		printf("SHARED MEMORY sent \n");
+		break;
 	case QUEUE:
 		printf("QUEUE selected \n");
 		status = 0;
