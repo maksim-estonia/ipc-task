@@ -41,6 +41,7 @@ int send_message_processing(char * read_path)
 	if (coid == -1)
 	{
 		perror("ConnectAttach");
+		fclose(fp);
 		exit(EXIT_FAILURE);
 	}
 	msg.msg_type = STR_MSG_TYPE;
@@ -62,6 +63,7 @@ int send_message_processing(char * read_path)
 			if (status == -1)
 			{
 				perror("MsgSend");
+				fclose(fp);
 				exit(EXIT_FAILURE);
 			}
 

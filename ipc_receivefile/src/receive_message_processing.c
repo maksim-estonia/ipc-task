@@ -18,6 +18,11 @@ int receive_message_processing(char * write_path)
 
 	// create file
 	fp = fopen(write_path, "w+");
+	if (fp == NULL)
+	{
+		perror("fopen");
+		exit(EXIT_FAILURE);
+	}
 
 	// register our name
 	att = name_attach(NULL, SERVER_NAME, 0);
@@ -25,6 +30,7 @@ int receive_message_processing(char * write_path)
 	if (att == NULL)
 	{
 		perror("name_attach");
+		fclose(fp);
 		exit(EXIT_FAILURE);
 	}
 
@@ -35,6 +41,7 @@ int receive_message_processing(char * write_path)
 		if (rcvid == -1)
 		{
 			perror("MsgReceive");
+			fclose(fp);
 			exit(EXIT_FAILURE);
 		}
 		else if (rcvid == 0)
@@ -65,12 +72,14 @@ int receive_message_processing(char * write_path)
 				if (status == -1)
 				{
 					perror("MsgReply");
+					fclose(fp);
 					exit(EXIT_FAILURE);
 				}
 			}
 			else
 			{
 				perror("MsgError");
+				fclose(fp);
 				exit(EXIT_FAILURE);
 			}
 		}

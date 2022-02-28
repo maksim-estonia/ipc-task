@@ -27,9 +27,9 @@ int main(int argc, char* argv[])
 	int status = 0;
 
 	/* Default arguments values */
-	(&arg)->tr_type = DEFAULT;
-	(&arg)->read_path = NULL;
-	(&arg)->write_path = NULL;
+	arg.tr_type = DEFAULT;
+	arg.read_path = NULL;
+	arg.write_path = NULL;
 
 	/* if not enough arguments given */
 	if (argc < 2)
@@ -51,23 +51,23 @@ int main(int argc, char* argv[])
 		switch (c)
 		{
 		case 'm':
-			(&arg)->tr_type 	= MESSAGE;
+			arg.tr_type 	= MESSAGE;
 			//(&arg)->read_path 	= optarg;
 			break;
 		case 'q':
-			(&arg)->tr_type 	= QUEUE;
+			arg.tr_type 	= QUEUE;
 			//(&arg)->read_path	= optarg;
 			break;
 		case 'p':
-			(&arg)->tr_type		= PIPE;
+			arg.tr_type		= PIPE;
 			//(&arg)->read_path	= optarg;
 			break;
 		case 's':
-			(&arg)->tr_type		= SHM;
+			arg.tr_type		= SHM;
 			//(&arg)->read_path	= optarg;
 			break;
 		case 'f':
-			(&arg)->write_path	= optarg;
+			arg.write_path	= optarg;
 			break;
 
 		case 'h':
@@ -86,13 +86,13 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if (!(&arg)->write_path)
+	if (!arg.write_path)
 	{
 		fprintf(stderr, "No file path provided \n");
 		return -1;
 	}
 
-	switch ((&arg)->tr_type)
+	switch (arg.tr_type)
 	{
 	case QUEUE:
 	case SHM:
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 		return -1;
 	case MESSAGE:
 		printf("MESSAGE selected \n");
-		status = receive_message_processing((&arg)->write_path);
+		status = receive_message_processing(arg.write_path);
 		if (status != 0)
 		{
 			fprintf(stderr, "MESSAGE failed \n");
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
 	case PIPE:
 		printf("PIPE messaging selected \n");
 		status = 0;
-		status = receive_pipe_processing((&arg)->write_path);
+		status = receive_pipe_processing(arg.write_path);
 		if (status != 0)
 		{
 			fprintf(stderr, "PIPE receive failed \n");
