@@ -74,6 +74,12 @@ int send_message_processing(char * read_path)
 		msg.string[sizeof(msg.string)-1] = '\0';
 		printf("read string: %s \n", msg.string);
 		status = MsgSend(coid, &msg, sizeof(msg.msg_type) + strlen(msg.string) + 1, NULL, 0);
+		if (status == -1)
+		{
+			perror("MsgSend");
+			fclose(fp);
+			exit(EXIT_FAILURE);
+		}
 		n +=1;
 
 	}
