@@ -18,9 +18,9 @@ int main(int argc, char* argv[])
 	int status = 0;
 
 	/* Default arguments values */
-	(&arg)->tr_type	= DEFAULT;
-	(&arg)->read_path	= NULL;
-	(&arg)->write_path = NULL;
+	arg.tr_type	= DEFAULT;
+	arg.read_path	= NULL;
+	arg.write_path = NULL;
 
 	/* if not enough arguments given */
 	if (argc < 2)
@@ -46,23 +46,23 @@ int main(int argc, char* argv[])
 		switch (c)
 		{
 		case 'm':
-			(&arg)->tr_type 	= MESSAGE;
+			arg.tr_type 	= MESSAGE;
 			//(&arg)->read_path 	= optarg;
 			break;
 		case 'q':
-			(&arg)->tr_type 	= QUEUE;
+			arg.tr_type 	= QUEUE;
 			//(&arg)->read_path	= optarg;
 			break;
 		case 'p':
-			(&arg)->tr_type		= PIPE;
+			arg.tr_type		= PIPE;
 			//(&arg)->read_path	= optarg;
 			break;
 		case 's':
-			(&arg)->tr_type		= SHM;
+			arg.tr_type		= SHM;
 			//(&arg)->read_path	= optarg;
 			break;
 		case 'f':
-			(&arg)->read_path	= optarg;
+			arg.read_path	= optarg;
 			break;
 
 		case 'h':
@@ -82,21 +82,22 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if (!(&arg)->read_path)
+	if (!arg.read_path)
 	{
 		fprintf(stderr, "No file path provided \n");
 		return -1;
 	}
 
-	switch ((&arg)->tr_type)
+	switch (arg.tr_type)
 	{
+
 	case SHM:
 		fprintf(stderr, "This type of ipc is not yet implemented \n");
 		return -1;
 	case QUEUE:
 		printf("QUEUE selected \n");
 		status = 0;
-		status = send_queue_processing((&arg)->read_path);
+		status = send_queue_processing(arg.read_path);
 		if (status != 0)
 		{
 			fprintf(stderr, "QUEUE failed \n");
@@ -107,7 +108,7 @@ int main(int argc, char* argv[])
 	case MESSAGE:
 		printf("MESSAGE selected \n");
 		status = 0;
-		status = send_message_processing((&arg)->read_path);
+		status = send_message_processing(arg.read_path);
 		if (status != 0)
 		{
 			fprintf(stderr, "MESSAGE failed \n");
@@ -118,7 +119,7 @@ int main(int argc, char* argv[])
 	case PIPE:
 		printf("PIPE messaging selected \n");
 		status = 0;
-		status = send_pipe_processing((&arg)->read_path);
+		status = send_pipe_processing(arg.read_path);
 		if (status != 0)
 		{
 			fprintf(stderr, "PIPE messaging failed \n");
