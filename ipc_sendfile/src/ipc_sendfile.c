@@ -8,6 +8,8 @@
 
 #include "send_message_processing.h"
 
+#include "send_queue_processing.h"
+
 int main(int argc, char* argv[])
 {
 
@@ -88,10 +90,21 @@ int main(int argc, char* argv[])
 
 	switch (arg.tr_type)
 	{
-	case QUEUE:
+
 	case SHM:
 		fprintf(stderr, "This type of ipc is not yet implemented \n");
 		return -1;
+	case QUEUE:
+		printf("QUEUE selected \n");
+		status = 0;
+		status = send_queue_processing(arg.read_path);
+		if (status != 0)
+		{
+			fprintf(stderr, "QUEUE failed \n");
+			return -1;
+		}
+		printf("QUEUE sent \n");
+		break;
 	case MESSAGE:
 		printf("MESSAGE selected \n");
 		status = 0;

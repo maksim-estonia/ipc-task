@@ -13,6 +13,9 @@
 
 #include "receive_message_processing.h"
 
+
+#include "receive_queue_processing.h"
+
 //typedef union
 //{
 //	uint16_t type;
@@ -94,10 +97,20 @@ int main(int argc, char* argv[])
 
 	switch (arg.tr_type)
 	{
-	case QUEUE:
+
 	case SHM:
 		fprintf(stderr, "This type of ipc is not yet implemented \n");
 		return -1;
+	case QUEUE:
+		printf("QUEUE selected \n");
+		status = receive_queue_processing(arg.write_path);
+		if (status != 0)
+		{
+			fprintf(stderr, "QUEUE failed \n");
+			return -1;
+		}
+		printf("QUEUE received");
+		break;
 	case MESSAGE:
 		printf("MESSAGE selected \n");
 		status = receive_message_processing(arg.write_path);
@@ -125,7 +138,7 @@ int main(int argc, char* argv[])
 	}
 
 	return 0;
-
+}
 
 
 
