@@ -37,6 +37,7 @@ int send_queue_processing(char * read_path)
 	if ( (qd_server = mq_open(SERVER_QUEUE_NAME, O_WRONLY)) == -1 )
 	{
 		perror("Client: mq_open (server)");
+		fclose(fp);
 		exit(-1);
 	}
 
@@ -46,6 +47,7 @@ int send_queue_processing(char * read_path)
 	if (status == -1)
 	{
 		perror("Client: not able to send message to server \n");
+		fclose(fp);
 		exit(1);
 	}
 	delay(100);
@@ -64,10 +66,11 @@ int send_queue_processing(char * read_path)
 			if (status == -1)
 			{
 				perror("Client: not able to send message to server \n");
+				fclose(fp);
 				exit(-1);
 			}
 			delay(100);
-
+			fclose(fp);
 			break;
 		}
 
@@ -78,6 +81,7 @@ int send_queue_processing(char * read_path)
 		if (status == -1)
 		{
 			perror("Client: not able to send message to server \n");
+			fclose(fp);
 			exit(-1);
 		}
 		delay(100);

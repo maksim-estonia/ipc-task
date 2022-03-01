@@ -28,12 +28,18 @@ int receive_queue_processing(char * write_path)
 
 	// create file
 	fp = fopen(write_path, "w+");
+	if (fp == NULL)
+	{
+		perror("fopen");
+		exit(-1);
+	}
 
 	// open queue
 	qd_server = mq_open(SERVER_QUEUE_NAME, O_RDONLY | O_CREAT, QUEUE_PERMISSIONS, &attr);
 	if (qd_server == -1)
 	{
 		perror("Server: mq_open");
+		fclose(fp);
 		exit(-1);
 	}
 
@@ -44,6 +50,7 @@ int receive_queue_processing(char * write_path)
 		if (read_bytes == -1)
 		{
 			perror("Server: mq_receive");
+			fclose(fp);
 			exit(-1);
 		}
 
