@@ -18,13 +18,11 @@ int receive_message_processing(char * write_path)
 
 	// create file
 	fp = fopen(write_path, "w+");
-
 	if (fp == NULL)
 	{
 		perror("fopen");
 		exit(EXIT_FAILURE);
 	}
-
 	// register our name
 	att = name_attach(NULL, SERVER_NAME, 0);
 
